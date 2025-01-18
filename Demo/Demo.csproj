@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Netconf.Rebex\Netconf.Rebex.csproj" />
+      <ProjectReference Include="..\Netconf\Netconf.csproj" />
+    </ItemGroup>
+
+</Project>
