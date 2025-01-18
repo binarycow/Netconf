@@ -1,5 +1,8 @@
-﻿namespace Netconf;
+﻿using JetBrains.Annotations;
 
+namespace Netconf;
+
+[PublicAPI]
 public static class ErrorTags
 {
     public const string InUse = "in-use";

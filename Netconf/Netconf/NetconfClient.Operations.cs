@@ -6,53 +6,57 @@ namespace Netconf.Netconf;
 public sealed partial class NetconfClient
 {
 
-    public Task KillSession(uint sessionId)
-        => KillSession(sessionId.ToString()).GetValueOrThrow();
-    public Task KillSession(int sessionId)
-        => KillSession(sessionId.ToString()).GetValueOrThrow();
-    public async Task<RpcResult> KillSession(string sessionId) => await this.NotifyRpcRequestOkResponse(
+    public Task KillSession(
+        uint sessionId,
+        CancellationToken cancellationToken = default
+    ) => KillSession(sessionId.ToString(), cancellationToken);
+    public Task KillSession(
+        int sessionId,
+        CancellationToken cancellationToken = default
+    ) => this.KillSession(sessionId.ToString(), cancellationToken);
+    public async Task KillSession(
+        string sessionId,
+        CancellationToken cancellationToken = default
+    ) => await this.NotifyRpcRequestOkResponse(
         new KillSession(sessionId),
-        CancellationToken.None
-    );
+        cancellationToken
+    ).GetValueOrThrow();
 
-    public Task<RpcResult<XElement>> GetConfigAsync(
+    public Task<XElement> GetAsync(
+        XName subtree,
+        CancellationToken cancellationToken = default
+    ) => this.InvokeRpcRequestXElement<Get>(
+        new(new SubtreeGetFilter(new(subtree))),
+        cancellationToken
+    ).GetValueOrThrow();
+    
+    public Task<XElement> GetAsync(
+        GetFilter? filter,
+        CancellationToken cancellationToken = default
+    ) => this.InvokeRpcRequestXElement<Get>(
+        new(filter),
+        cancellationToken
+    ).GetValueOrThrow();
+    
+    public Task<XElement> GetConfigAsync(
         Datastore source,
-        CancellationToken cancellationToken
+        CancellationToken cancellationToken = default
     ) => this.GetConfigAsync<GetFilter>(
         source,
         null,
         cancellationToken
     );
     
-    public Task<RpcResult<XElement>> GetConfigAsync<TFilter>(
+    public Task<XElement> GetConfigAsync<TFilter>(
         Datastore source,
         TFilter? filter,
-        CancellationToken cancellationToken
+        CancellationToken cancellationToken = default
     ) where TFilter : GetFilter
     {
         this.ThrowExceptionIfNotSupported((filter as IRequiresCapabilities)?.RequiredCapabilities);
-        return this.InvokeRpcRequest<GetConfig, XElement>(
+        return this.InvokeRpcRequestXElement<GetConfig>(
             new(source, filter),
-            static response =>
-            {
-                if (response.IsError(out var errors))
-                {
-                    return errors;
-                }
-
-                if (!response.Elements.TryGetSingle(out var element))
-                {
-                    throw new NotImplementedException();
-                }
-
-                if (element.Name is not { LocalName: "data", NamespaceName: Namespaces.Netconf or "" })
-                {
-                    throw new NotImplementedException();
-                }
-
-                return element;
-            },
             cancellationToken
-        );
+        ).GetValueOrThrow();
     }
 }

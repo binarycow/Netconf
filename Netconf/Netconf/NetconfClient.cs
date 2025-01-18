@@ -46,7 +46,7 @@ public sealed partial class NetconfClient : IClient
         this.Completion = task;
     }
 
-    public async Task CloseSession()
+    public async Task CloseSession(CancellationToken cancellationToken = default)
     {
         if (this.loggedOut)
         {
@@ -55,7 +55,7 @@ public sealed partial class NetconfClient : IClient
         this.loggedOut = true;
         await this.NotifyRpcRequestOkResponse(
             Models.CloseSession.Instance,
-            CancellationToken.None
+            cancellationToken
         );
         this.outgoingMessages.Writer.Complete();
     }

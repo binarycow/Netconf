@@ -13,3 +13,11 @@ internal sealed record GetConfig(Datastore Source, GetFilter? Filter) : IXmlForm
         this.Filter?.ToXElement()
     );
 }
+
+internal sealed record Get(GetFilter? Filter) : IXmlFormattable
+{
+    public XElement ToXElement() => new(
+        XNamespaces.Netconf + "get",
+        this.Filter?.ToXElement()
+    );
+}

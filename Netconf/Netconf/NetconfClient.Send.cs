@@ -45,6 +45,37 @@ public sealed partial class NetconfClient
         return listener.Task;
     }
 
+    internal Task<RpcResult<XElement>> InvokeRpcRequestXElement<TRequest>(
+        TRequest requestPayload,
+        CancellationToken cancellationToken
+    ) 
+        where TRequest : IXmlFormattable
+    {
+        return this.InvokeRpcRequest<TRequest, XElement>(
+            requestPayload,
+            static response =>
+            {
+                if (response.IsError(out var errors))
+                {
+                    return errors;
+                }
+
+                if (!response.Elements.TryGetSingle(out var element))
+                {
+                    throw new NotImplementedException();
+                }
+
+                if (element.Name is not { LocalName: "data", NamespaceName: Namespaces.Netconf or "" })
+                {
+                    throw new NotImplementedException();
+                }
+
+                return element;
+            },
+            cancellationToken
+        );
+    }
+    
     internal Task<RpcResult> NotifyRpcRequestOkResponse<TRequest>(
         TRequest requestPayload,
         CancellationToken cancellationToken

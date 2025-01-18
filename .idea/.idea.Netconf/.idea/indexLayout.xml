@@ -2,9 +2,14 @@
 <project version="4">
   <component name="UserContentModel">
     <attachedFolders>
+      <Path>C:/yang</Path>
       <Path>.</Path>
+      <Path>../../openconfig/release/models</Path>
     </attachedFolders>
     <explicitIncludes />
-    <explicitExcludes />
+    <explicitExcludes>
+      <Path>C:/yang</Path>
+      <Path>../../openconfig/release/models</Path>
+    </explicitExcludes>
   </component>
 </project>
