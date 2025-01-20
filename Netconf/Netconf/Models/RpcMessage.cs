@@ -6,6 +6,7 @@ internal abstract record RpcMessage
     : IXmlFormattable, 
         IXmlParsable<RpcMessage>
 {
+    internal XElement? OriginalElement { get; init; }
     public abstract string? MessageId { get; }
     public abstract XElement ToXElement();
     public static RpcMessage FromXElement(XElement element) => element.Name switch
@@ -14,11 +15,18 @@ internal abstract record RpcMessage
         { NamespaceName: Namespaces.Netconf or "", LocalName: "rpc-reply" } => ParseReply(element: element),
         _ => throw new NotImplementedException(),
     };
-    private static XElementRpcReply ParseReply(XElement element) => new(
-        MessageId: element.Attribute(name: "message-id")?.Value,
-        Elements: element.Elements().ToReadOnlyList(),
-        Attributes: element.Attributes().Where(predicate: static x => x.Name != "message-id").ToReadOnlyList()
-    );
+
+    private static XElementRpcReply ParseReply(XElement element)
+    {
+        return new(
+            MessageId: element.Attribute(name: "message-id")?.Value,
+            Elements: element.Elements().ToReadOnlyList(),
+            Attributes: element.Attributes().Where(predicate: static x => x.Name != "message-id").ToReadOnlyList()
+        )
+        {
+            OriginalElement = element,
+        };
+    }
 
     private static XElementRpcRequest ParseRequest(XElement element)
     {

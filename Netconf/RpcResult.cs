@@ -10,6 +10,7 @@ public readonly struct RpcResult
     }
     public bool IsSuccess { get; private init; }
     public static RpcResult Success() => new() { IsSuccess = true };
+    public static RpcResult<T> Success<T>(T value) where T : notnull => value;
     public RpcErrorList Errors { get; }
 
     public static implicit operator RpcResult(RpcErrorList errors) => new(errors);
@@ -91,4 +92,11 @@ public readonly struct RpcResult<T> : IEquatable<RpcResult<T>> where T : notnull
     public override string ToString() => this.IsSuccess
         ? $"RpcResult<{typeof(T)}> {{ IsSuccess = true, Value = {this.Value.ToString()} }}"
         : $"RpcResult<{typeof(T)}> {{ IsSuccess = false, Errors = {this.Errors.ToString()} }}";
+
+    public RpcResult<TOther> Map<TOther>(Func<T, TOther> mapper)
+        where TOther : notnull
+        => this.IsSuccess ? mapper(this.Value) : this.Errors;
+    public RpcResult<TOther> Bind<TOther>(Func<T, RpcResult<TOther>> mapper)
+        where TOther : notnull
+        => this.IsSuccess ? mapper(this.Value) : this.Errors;
 }

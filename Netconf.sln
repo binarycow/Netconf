@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo", "Demo\Demo.csproj", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Netconf.Rebex", "Netconf.Rebex\Netconf.Rebex.csproj", "{2DD9F368-BC86-44F5-86C7-EFBA4C0E5C8B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo2", "Demo2\Demo2.csproj", "{8F17768D-B327-4D40-AD86-EC60927954C0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{2DD9F368-BC86-44F5-86C7-EFBA4C0E5C8B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2DD9F368-BC86-44F5-86C7-EFBA4C0E5C8B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2DD9F368-BC86-44F5-86C7-EFBA4C0E5C8B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8F17768D-B327-4D40-AD86-EC60927954C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8F17768D-B327-4D40-AD86-EC60927954C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8F17768D-B327-4D40-AD86-EC60927954C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8F17768D-B327-4D40-AD86-EC60927954C0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

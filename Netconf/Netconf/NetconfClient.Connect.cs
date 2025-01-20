@@ -16,12 +16,12 @@ public sealed partial class NetconfClient
         try
         {
             var clientTask = framingProtocol.WriteAsync(
-                session.NetconfSubsystem.Output,
+                session.Pipe.Output,
                 clientHello,
                 cancellationToken
             );
             var serverTask = framingProtocol.ReadSingleMessageAsync<ServerHello>(
-                session.NetconfSubsystem.Input,
+                session.Pipe.Input,
                 cancellationToken
             ).AsTask();
             await Task.WhenAll(clientTask, serverTask);
@@ -34,7 +34,6 @@ public sealed partial class NetconfClient
                 ? IFramingProtocol.Chunked
                 : IFramingProtocol.Legacy;
             client = new(session, clientHello, serverHello, framingProtocol);
-            client.Start();
             return client;
         }
         catch (Exception e)

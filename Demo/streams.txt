@@ -1,0 +1,14 @@
+[
+  {
+    "Name": "NETCONF",
+    "Description": "default NETCONF event stream",
+    "ReplaySupport": false,
+    "ReplayLogCreationTime": null
+  },
+  {
+    "Name": "snmpevents",
+    "Description": "SNMP related notifications",
+    "ReplaySupport": true,
+    "ReplayLogCreationTime": "2025-01-19T23:57:25.631438+00:00"
+  }
+]

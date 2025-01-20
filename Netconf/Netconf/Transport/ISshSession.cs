@@ -4,5 +4,5 @@ namespace Netconf.Netconf.Transport;
 
 public interface ISshSession : IDisposable
 {
-    public IDuplexPipe NetconfSubsystem { get; }
+    public IDuplexPipe Pipe { get; }
 }

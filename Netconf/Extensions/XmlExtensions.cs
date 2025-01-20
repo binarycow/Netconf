@@ -5,9 +5,37 @@ namespace Netconf;
 
 internal static class XmlExtensions
 {
+    public static bool NameMatchesWithMaybeNamespace(this XElement element, XName expectedName)
+        => element.Name.LocalName == expectedName.LocalName 
+           && (element.Name.Namespace == expectedName.Namespace || element.Name.Namespace == XNamespace.None);
+
+    public static void Deconstruct(this XName name, out XNamespace @namespace, out string localName)
+    {
+        @namespace = name.Namespace;
+        localName = name.LocalName;
+    }
+    
+    
     public static T ParseEnum<T>(this XElement element, bool ignoreCase = true)
         where T : struct, Enum
         => Enum.Parse<T>(element.Value, ignoreCase: ignoreCase);
+
+    public static DateTimeOffset ParseDateTimeOffset(this XElement element)
+        => DateTimeOffset.Parse(element.Value);
+
+    public static bool ParseBool(this XElement element)
+    {
+        var text = element.Value;
+        if (text.Equals("true", StringComparison.Ordinal))
+        {
+            return true;
+        }
+        if (text.Equals("false", StringComparison.Ordinal))
+        {
+            return false;
+        }
+        throw new NotImplementedException();
+    }
     
     public static IEnumerable<XElement> Clone(this IEnumerable<XElement> elements) 
         => elements.Select(Clone);

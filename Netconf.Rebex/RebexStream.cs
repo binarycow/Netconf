@@ -5,13 +5,11 @@ namespace Netconf;
 
 internal sealed class RebexStream : Stream
 {
-    private readonly SshSession ssh;
     private readonly SshChannel channel;
     private bool disposed;
 
-    public RebexStream(SshSession ssh, SshChannel channel)
+    public RebexStream(SshChannel channel)
     {
-        this.ssh = ssh;
         this.channel = channel;
     }
 
@@ -168,8 +166,6 @@ internal sealed class RebexStream : Stream
         this.disposed = true;
         this.channel.Close();
         this.channel.Dispose();
-        this.ssh.Disconnect();
-        this.ssh.Dispose();
     }
 
 }

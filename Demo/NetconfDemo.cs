@@ -1,4 +1,5 @@
-﻿using System.Xml.Linq;
+﻿using System.Text.Json;
+using System.Xml.Linq;
 using Netconf;
 using Netconf.Netconf;
 using Netconf.Netconf.Models;
@@ -8,6 +9,7 @@ namespace Demo;
 public static class NetconfDemo
 {
     private const string CapabilitiesFilename = @"S:\DotNetProjects\Netconf\Demo\capabilities.txt";
+    private const string StreamsFilename = @"S:\DotNetProjects\Netconf\Demo\streams.txt";
     private const string TrialKey = "==Ak3xHAH25RI/kACf72fojgT/NqXFhWOEAjaLJZpKfA1s=="; // Expires 2025-02-17
     
     public static async Task Run()
@@ -25,11 +27,27 @@ public static class NetconfDemo
         Console.WriteLine($"# of capabilities: {client.ServerHello.Capabilities.Count}");
         await File.WriteAllLinesAsync(CapabilitiesFilename, client.ServerHello.Capabilities.Select(static x => x.ToString()));
 
+        Console.WriteLine("Getting a list of event streams");
+        var streams = await client.ListEventStreams();
+        await File.WriteAllTextAsync(
+            StreamsFilename,
+            JsonSerializer.Serialize(streams, Program.JsonOptions)
+        );
+
+        Console.WriteLine("Subscribing to NETCONF stream");
+        await foreach(var notification in client.SubscribeToStream(streams.Single(static x => x.Name == "NETCONF")))
+        {
+            Console.WriteLine(notification);
+        }
+        
+        
+        /*
         Console.WriteLine("Executing 'get-config'");
         Console.WriteLine(await client.GetConfigAsync(
             Datastore.Running,
             CancellationToken.None
         ));
+        
         Console.WriteLine("Killing a (hopefully) invalid session");
         try
         {
@@ -42,6 +60,7 @@ public static class NetconfDemo
 
         Console.WriteLine("Getting openconfig system-top");
         Console.WriteLine(await client.GetAsync(XNamespace.Get("http://openconfig.net/yang/system") + "system-top"));
+        */
 
         await client.CloseSession();
         await client.Completion;

@@ -1,4 +1,5 @@
-﻿using Netconf;
+﻿using System.Text.Json;
+using Netconf;
 
 namespace Demo;
 
@@ -6,8 +7,8 @@ internal static class Program
 {
     public static async Task Main()
     {
-        // await NetconfDemo.Run();
-        await RestconfDemo.Run();
+        await NetconfDemo.Run();
+        // await RestconfDemo.Run();
         Console.WriteLine("Done!");
     }
     
@@ -16,6 +17,10 @@ internal static class Program
     public const string Password = "C1sco12345";
     public const int NetconfPort = 830;
     public const int RestconfPort = 443;
+    public static JsonSerializerOptions JsonOptions { get; } = new(JsonSerializerOptions.Default)
+    {
+        WriteIndented = true,
+    };
 
 
     public static void WriteException(RpcException exception)
@@ -34,7 +39,6 @@ internal static class Program
         if (exception.Info is { } info)
             Console.WriteLine($"Info: {info}");
     }
-
 
 }
 

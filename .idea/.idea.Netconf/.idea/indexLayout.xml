@@ -4,6 +4,7 @@
     <attachedFolders>
       <Path>C:/yang</Path>
       <Path>.</Path>
+      <Path>Schemas</Path>
       <Path>../../openconfig/release/models</Path>
     </attachedFolders>
     <explicitIncludes />

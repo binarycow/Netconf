@@ -37,9 +37,7 @@ public sealed class RebexSshFactory : ISshFactory
             ssh.Authenticate(username, password);
             channel = ssh.OpenSession();
             channel.RequestSubsystem("netconf");
-            stream = new (ssh, channel);
-            pipe = new (stream);
-            return new RebexSshSession(pipe);
+            return new RebexSshSession(channel, ssh);
         }
         catch (Exception e)
         {

@@ -68,7 +68,8 @@ internal sealed class RpcListener<TResponse> : RpcListener
     }
     private readonly TaskCompletionSource<RpcResult<TResponse>> tcs = new();
     public override Task<RpcResult<TResponse>> Task => this.tcs.Task;
-    
+    public object? Request { get; init; }
+
     public override void SetException(Exception exception)
         => this.tcs.SetException(exception);
     public override void SetCancelled(CancellationToken cancellationToken)
