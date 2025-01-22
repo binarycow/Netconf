@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using Netconf.Netconf.Models;
 
 namespace Netconf;
 
@@ -14,7 +15,6 @@ public readonly struct RpcResult
     public RpcErrorList Errors { get; }
 
     public static implicit operator RpcResult(RpcErrorList errors) => new(errors);
-    public static implicit operator RpcResult(RpcError error) => new(error);
 
     public bool Equals(RpcErrorList other) => this.Errors.Equals(other);
     public bool Equals(RpcResult other) => other.IsSuccess
@@ -25,8 +25,8 @@ public readonly struct RpcResult
         null => !this.IsSuccess,
         RpcResult other => this.Equals(other),
         RpcErrorList other => this.Equals(other),
-        RpcError other => this.Equals(other),
-        IReadOnlyList<RpcError> other => this.Equals(new RpcErrorList(other)),
+        NetconfError other => this.Equals(new(other)),
+        IReadOnlyList<NetconfError> other => this.Equals(new(other)),
         _ => false,
     };
     public override int GetHashCode() => HashCode.Combine(this.IsSuccess, this.Errors);
@@ -44,7 +44,6 @@ public readonly struct RpcResult<T> : IEquatable<RpcResult<T>> where T : notnull
     {
         this.Errors = errors;
     }
-
     public RpcResult(T value)
     {
         ThrowHelper.ThrowArgumentNullIfNull(value);
@@ -60,7 +59,6 @@ public readonly struct RpcResult<T> : IEquatable<RpcResult<T>> where T : notnull
     public RpcErrorList Errors { get; }
 
     public static implicit operator RpcResult<T>(RpcErrorList errors) => new(errors);
-    public static implicit operator RpcResult<T>(RpcError error) => new(error);
     public static implicit operator RpcResult<T>(T value) => new(value);
 
     public static implicit operator RpcResult(RpcResult<T> value)
@@ -80,8 +78,8 @@ public readonly struct RpcResult<T> : IEquatable<RpcResult<T>> where T : notnull
         T other => this.Equals(other),
         RpcResult<T> other => this.Equals(other),
         RpcErrorList other => this.Equals(other),
-        RpcError other => this.Equals(other),
-        IReadOnlyList<RpcError> other => this.Equals(new RpcErrorList(other)),
+        IRpcError other => this.Equals(new RpcErrorList(other)),
+        IReadOnlyList<NetconfError> other => this.Equals(new RpcErrorList(other)),
         _ => false,
     };
     public override int GetHashCode() => HashCode.Combine(this.IsSuccess, this.Value, this.Errors);

@@ -1,37 +1,35 @@
 ﻿using System.Collections;
 using System.Collections.Immutable;
 using System.Collections.ObjectModel;
-using System.Text;
 
 namespace Netconf;
 
-public readonly partial struct RpcErrorList : IReadOnlyList<RpcError>, IList<RpcError>, IList, IEquatable<RpcErrorList>
+public readonly struct RpcErrorList : IReadOnlyList<IRpcError>, IList<IRpcError>, IList, IEquatable<RpcErrorList>
 {
     private readonly object? value;
-    public RpcErrorList(RpcError error) => this.value = error;
-    public RpcErrorList(IReadOnlyList<RpcError> errors) => this.value = errors;
-    public static implicit operator RpcErrorList(RpcError error) => new(error);
-    public static implicit operator RpcErrorList(List<RpcError> error) => new(error);
-    public static implicit operator RpcErrorList(Collection<RpcError> error) => new(error);
-    public static implicit operator RpcErrorList(RpcError[] error) => new(error);
-    public static implicit operator RpcErrorList(ImmutableList<RpcError> error) => new(error);
-    public static implicit operator RpcErrorList(ReadOnlyCollection<RpcError> error) => new(error);
+    public RpcErrorList(IRpcError error) => this.value = error;
+    public RpcErrorList(IReadOnlyList<IRpcError> errors) => this.value = errors;
+    public static implicit operator RpcErrorList(List<IRpcError> error) => new(error);
+    public static implicit operator RpcErrorList(Collection<IRpcError> error) => new(error);
+    public static implicit operator RpcErrorList(IRpcError[] error) => new(error);
+    public static implicit operator RpcErrorList(ImmutableList<IRpcError> error) => new(error);
+    public static implicit operator RpcErrorList(ReadOnlyCollection<IRpcError> error) => new(error);
     public Enumerator GetEnumerator() => new Enumerator(this);
-    IEnumerator<RpcError> IEnumerable<RpcError>.GetEnumerator() => this.GetEnumerator();
+    IEnumerator<IRpcError> IEnumerable<IRpcError>.GetEnumerator() => this.GetEnumerator();
     IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
     public bool Equals(RpcErrorList other) => other.value switch
     {
-        RpcError error => this.Equals(error),
-        IReadOnlyList<RpcError> error => this.Equals(error),
+        IRpcError error => this.Equals(error),
+        IReadOnlyList<IRpcError> error => this.Equals(error),
         _ => this.Count is 0
     };
 
-    public bool Equals(IEnumerable<RpcError>? other)
+    public bool Equals(IEnumerable<IRpcError>? other)
     {
         switch (this.value)
         {
-            case RpcError singleError:
+            case IRpcError singleError:
             {
                 using var otherEnumerator = other?.GetEnumerator();
                 return otherEnumerator is not null
@@ -39,26 +37,26 @@ public readonly partial struct RpcErrorList : IReadOnlyList<RpcError>, IList<Rpc
                        && singleError.Equals(otherEnumerator.Current)
                        && !otherEnumerator.MoveNext();
             }
-            case IReadOnlyList<RpcError> list:
+            case IReadOnlyList<IRpcError> list:
                 return list.SequenceEqual(other ?? []);
             default:
                 return other is null;
         }
     }
 
-    public bool Equals(RpcError? other) => (this.value, other) switch
+    public bool Equals(IRpcError? other) => (this.value, other) switch
     {
         (null, null) => true,
-        (IReadOnlyList<RpcError> and [], null) => true,
-        (RpcError error, not null) => error.Equals(other),
+        (IReadOnlyList<IRpcError> and [], null) => true,
+        (IRpcError error, not null) => error.Equals(other),
         _ => false,
     };
 
     public override bool Equals(object? obj) => obj switch
     {
         RpcErrorList other => this.Equals(other),
-        RpcError other => this.Equals(other),
-        IEnumerable<RpcError> other => this.Equals(other),
+        IRpcError other => this.Equals(other),
+        IEnumerable<IRpcError> other => this.Equals(other),
         _ => false,
     };
 
@@ -78,26 +76,26 @@ public readonly partial struct RpcErrorList : IReadOnlyList<RpcError>, IList<Rpc
 
     public int Count => this.value switch
     {
-        RpcError => 1,
-        IReadOnlyList<RpcError> list => list.Count,
+        IRpcError => 1,
+        IReadOnlyList<IRpcError> list => list.Count,
         _ => 0,
     };
 
-    public RpcError this[int index] => (this.value, index) switch
+    public IRpcError this[int index] => (this.value, index) switch
     {
-        (RpcError error, 0) => error,
-        (IReadOnlyList<RpcError> list, >= 0) when index < list.Count => list[index],
+        (IRpcError error, 0) => error,
+        (IReadOnlyList<IRpcError> list, >= 0) when index < list.Count => list[index],
         _ => throw new ArgumentOutOfRangeException(nameof(index), index, default),
     };
 
-    public bool Contains(RpcError item) => this.value switch
+    public bool Contains(IRpcError item) => this.value switch
     {
-        RpcError err => err.Equals(item),
-        IReadOnlyList<RpcError> list => list.Contains(item),
+        IRpcError err => err.Equals(item),
+        IReadOnlyList<IRpcError> list => list.Contains(item),
         _ => false,
     };
     
-    public void CopyTo(RpcError[] array, int arrayIndex)
+    public void CopyTo(IRpcError[] array, int arrayIndex)
     {
         // TODO: Make a sensible implementation
         throw new NotImplementedException();
@@ -111,15 +109,15 @@ public readonly partial struct RpcErrorList : IReadOnlyList<RpcError>, IList<Rpc
     bool IList.IsFixedSize => true;
     public bool IsReadOnly => true;
 
-    public int IndexOf(RpcError item) => this.value switch
+    public int IndexOf(IRpcError item) => this.value switch
     {
-        RpcError stored when stored.Equals(item) => 0,
-        List<RpcError> list => list.IndexOf(item),
-        IReadOnlyList<RpcError> list => IndexOfSlow(list, item),
+        IRpcError stored when stored.Equals(item) => 0,
+        List<IRpcError> list => list.IndexOf(item),
+        IReadOnlyList<IRpcError> list => IndexOfSlow(list, item),
         _ => -1,
     };
 
-    private static int IndexOfSlow(IReadOnlyList<RpcError> list, RpcError item)
+    private static int IndexOfSlow(IReadOnlyList<IRpcError> list, IRpcError item)
     {
         for (var i = 0; i < list.Count; ++i)
         {
@@ -134,17 +132,17 @@ public readonly partial struct RpcErrorList : IReadOnlyList<RpcError>, IList<Rpc
     bool ICollection.IsSynchronized => false;
     object ICollection.SyncRoot => this.value is ICollection coll ? coll.SyncRoot : this;
 
-    bool IList.Contains(object? item) => item is RpcError error && this.Contains(error);
+    bool IList.Contains(object? item) => item is IRpcError error && this.Contains(error);
 
-    int IList.IndexOf(object? item) => item is RpcError error ? this.IndexOf(error) : -1;
+    int IList.IndexOf(object? item) => item is IRpcError error ? this.IndexOf(error) : -1;
 
     public override string ToString()
     {
-        if (this.value is RpcError error)
+        if (this.value is IRpcError error)
         {
             return error.ToString();
         }
-        if (this.value is not IReadOnlyList<RpcError> list)
+        if (this.value is not IReadOnlyList<IRpcError> list)
         {
             return string.Empty;
         }
@@ -165,12 +163,12 @@ public readonly partial struct RpcErrorList : IReadOnlyList<RpcError>, IList<Rpc
 
 
     #region Not Supported
-    void ICollection<RpcError>.Add(RpcError item) => throw new NotSupportedException();
-    void ICollection<RpcError>.Clear() => throw new NotSupportedException();
-    bool ICollection<RpcError>.Remove(RpcError item) => throw new NotSupportedException();
-    void IList<RpcError>.Insert(int index, RpcError item) => throw new NotSupportedException();
-    void IList<RpcError>.RemoveAt(int index) => throw new NotSupportedException();
-    RpcError IList<RpcError>.this[int index]
+    void ICollection<IRpcError>.Add(IRpcError item) => throw new NotSupportedException();
+    void ICollection<IRpcError>.Clear() => throw new NotSupportedException();
+    bool ICollection<IRpcError>.Remove(IRpcError item) => throw new NotSupportedException();
+    void IList<IRpcError>.Insert(int index, IRpcError item) => throw new NotSupportedException();
+    void IList<IRpcError>.RemoveAt(int index) => throw new NotSupportedException();
+    IRpcError IList<IRpcError>.this[int index]
     {
         get => this[index];
         set => throw new NotSupportedException();
@@ -189,7 +187,7 @@ public readonly partial struct RpcErrorList : IReadOnlyList<RpcError>, IList<Rpc
     
     
 
-    public struct Enumerator : IEnumerator<RpcError>
+    public struct Enumerator : IEnumerator<IRpcError>
     {
         private const int StateNotStarted = 0;
         private const int StateInProgress = 1;
@@ -245,13 +243,13 @@ public readonly partial struct RpcErrorList : IReadOnlyList<RpcError>, IList<Rpc
             this.state = 0;
         }
 
-        public RpcError Current => this.State switch
+        public IRpcError Current => this.State switch
         {
             StateInProgress => this.list[this.Index],
             StateFinished => throw new InvalidOperationException("Enumeration finished"),
             _ => throw new InvalidOperationException("Enumeration not started"),
         };
 
-        object? IEnumerator.Current => this.Current;
+        object IEnumerator.Current => this.Current;
     }
 }

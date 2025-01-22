@@ -2,7 +2,7 @@
 <project version="4">
   <component name="UserContentModel">
     <attachedFolders>
-      <Path>C:/yang</Path>
+      <Path>C:/yang/standard/ietf/RFC</Path>
       <Path>.</Path>
       <Path>Schemas</Path>
       <Path>../../openconfig/release/models</Path>
@@ -10,6 +10,7 @@
     <explicitIncludes />
     <explicitExcludes>
       <Path>C:/yang</Path>
+      <Path>C:/yang/standard/ietf/RFC</Path>
       <Path>../../openconfig/release/models</Path>
     </explicitExcludes>
   </component>

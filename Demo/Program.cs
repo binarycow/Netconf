@@ -7,8 +7,8 @@ internal static class Program
 {
     public static async Task Main()
     {
-        await NetconfDemo.Run();
-        // await RestconfDemo.Run();
+        // await NetconfDemo.Run(CancellationToken.None);
+        await RestconfDemo.Run(CancellationToken.None);
         Console.WriteLine("Done!");
     }
     

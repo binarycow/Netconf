@@ -1,8 +1,8 @@
 ﻿using System.Xml.Linq;
 
-namespace Netconf;
+namespace Netconf.Netconf.Models;
 
-public sealed record RpcError(
+internal sealed record NetconfError(
     ErrorType Type,
     string? Tag,
     ErrorSeverity Severity,
@@ -11,14 +11,14 @@ public sealed record RpcError(
     string? Message,
     string? MessageLanguage,
     object? Info
-) : IXmlParsable<RpcError>
+) : IXmlParsable<NetconfError>, IRpcError
 {
     private static XNamespace NetconfNs => XNamespaces.Netconf;
 
-    static RpcError IXmlParsable<RpcError>.FromXElement(XElement element)
+    static NetconfError IXmlParsable<NetconfError>.FromXElement(XElement element)
         => FromXElement(element);
 
-    internal static RpcError FromXElement(XElement element)
+    internal static NetconfError FromXElement(XElement element)
     {
         if (
             element.Name.LocalName is not "rpc-error"

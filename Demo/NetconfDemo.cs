@@ -12,7 +12,7 @@ public static class NetconfDemo
     private const string StreamsFilename = @"S:\DotNetProjects\Netconf\Demo\streams.txt";
     private const string TrialKey = "==Ak3xHAH25RI/kACf72fojgT/NqXFhWOEAjaLJZpKfA1s=="; // Expires 2025-02-17
     
-    public static async Task Run()
+    public static async Task Run(CancellationToken cancellationToken)
     {
         RebexSshFactory.SetLicenseKey(TrialKey);
         await using var client = await NetconfClient.ConnectAsync(
@@ -25,17 +25,18 @@ public static class NetconfDemo
         );
         Console.WriteLine($"Session ID: {client.ServerHello.SessionId}");
         Console.WriteLine($"# of capabilities: {client.ServerHello.Capabilities.Count}");
-        await File.WriteAllLinesAsync(CapabilitiesFilename, client.ServerHello.Capabilities.Select(static x => x.ToString()));
+        await File.WriteAllLinesAsync(CapabilitiesFilename, client.ServerHello.Capabilities.Select(static x => x.ToString()), cancellationToken);
 
         Console.WriteLine("Getting a list of event streams");
-        var streams = await client.ListEventStreams();
+        var streams = await client.ListEventStreams(cancellationToken);
         await File.WriteAllTextAsync(
             StreamsFilename,
-            JsonSerializer.Serialize(streams, Program.JsonOptions)
+            JsonSerializer.Serialize(streams, Program.JsonOptions),
+            cancellationToken
         );
 
         Console.WriteLine("Subscribing to NETCONF stream");
-        await foreach(var notification in client.SubscribeToStream(streams.Single(static x => x.Name == "NETCONF")))
+        await foreach(var notification in client.SubscribeToStream(streams.Single(static x => x.Name == "NETCONF"), cancellationToken))
         {
             Console.WriteLine(notification);
         }
@@ -62,7 +63,7 @@ public static class NetconfDemo
         Console.WriteLine(await client.GetAsync(XNamespace.Get("http://openconfig.net/yang/system") + "system-top"));
         */
 
-        await client.CloseSession();
+        await client.CloseSession(cancellationToken);
         await client.Completion;
     }
 }

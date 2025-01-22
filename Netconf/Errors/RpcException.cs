@@ -1,4 +1,7 @@
-﻿namespace Netconf;
+﻿using System.Net;
+using Netconf.Restconf.Models;
+
+namespace Netconf;
 
 public sealed class RpcException : Exception
 {
@@ -6,15 +9,16 @@ public sealed class RpcException : Exception
     {
         
     }
-    public ErrorType Type { get; internal set; }
-    public string? Tag { get; internal set; }
-    public ErrorSeverity Severity { get; internal set; }
-    public string? AppTag { get; internal set; }
-    public string? Path { get; internal set; }
-    public string? MessageLanguage { get; internal set; }
-    public object? Info { get; internal set; }
+    public ErrorType Type { get; private init; }
+    public string? Tag { get; private init; }
+    public ErrorSeverity Severity { get; private init; }
+    public string? AppTag { get; private init; }
+    public string? Path { get; private init; }
+    public string? MessageLanguage { get; private init; }
+    public HttpStatusCode? StatusCode { get; private init; }
+    public object? Info { get; private init; }
 
-    internal static RpcException Create(RpcError error) => new(error.Message)
+    private static RpcException Create(IRpcError error) => new(error.Message)
     {
         Type = error.Type,
         Tag = error.Tag,
@@ -23,6 +27,7 @@ public sealed class RpcException : Exception
         Path = error.Path,
         MessageLanguage = error.MessageLanguage,
         Info = error.Info,
+        StatusCode = (error as RestconfError)?.StatusCode,
     };
 
     internal static Exception Create(RpcErrorList errorList) => errorList.Count switch

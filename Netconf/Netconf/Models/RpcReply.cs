@@ -28,14 +28,14 @@ internal sealed record XElementRpcReply(
 
     public override bool IsError(out RpcErrorList error)
     {
-        using var builder = new ValueListBuilder<RpcError>();
+        using var builder = new ValueListBuilder<IRpcError>();
         foreach (var element in this.Elements)
         {
             if (element.Name is not { LocalName: "rpc-error", NamespaceName: Namespaces.Netconf or "" })
             {
                 continue;
             }
-            builder.Append(RpcError.FromXElement(element));
+            builder.Append(NetconfError.FromXElement(element));
         }
         switch (builder.Length)
         {
@@ -43,7 +43,7 @@ internal sealed record XElementRpcReply(
                 error = default;
                 return false;
             case 1:
-                error = builder[0];
+                error = new(builder[0]);
                 return true;
             default:
                 error = builder.ToList().AsReadOnly();

@@ -9,4 +9,8 @@
       <ProjectReference Include="..\Netconf\Netconf.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="modules\" />
+    </ItemGroup>
+
 </Project>

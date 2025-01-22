@@ -22,6 +22,18 @@ internal static class CollectionExtensions
         }
     }
     
+    public static IEnumerable<TResult> Select<TItem, TArgument, TResult>(
+        this IEnumerable<TItem> items,
+        Func<TItem, TArgument, TResult> predicate,
+        TArgument argument
+    )
+    {
+        foreach (var item in items)
+        {
+            yield return predicate(item, argument);
+        }
+    }
+    
     public static bool TryGetSingle<T>(this IEnumerable<T> items, [MaybeNullWhen(false)] out T single)
     {
         single = default;
@@ -62,4 +74,9 @@ internal static class CollectionExtensions
 
     public static IReadOnlyList<T> ToReadOnlyList<T>(this IEnumerable<T> items) 
         => items.ToList().AsReadOnly();
+    public static IReadOnlyDictionary<TKey, TValue> ToReadOnlyDictionary<TKey, TValue>(
+        this IEnumerable<TValue> items,
+        Func<TValue, TKey> keySelector
+    ) where TKey : notnull
+        => items.ToDictionary(keySelector).AsReadOnly();
 }
